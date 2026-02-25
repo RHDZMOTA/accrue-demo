@@ -1,9 +1,9 @@
 import pandas as pd
 
-from accrue.datatools.transformer.interface import Transformer
+from accrue.datatools.transformer.interface import SingleSourceTransformer
 
 
-class PaymentEventsTransformer(Transformer):
+class PaymentEventsTransformer(SingleSourceTransformer):
     """
     Bronze payment_events → Silver payment_events_clean.
 

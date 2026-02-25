@@ -73,3 +73,32 @@ class PostgresService(ServiceInterface):
                 f"WHERE {watermark_col} > '{watermark_value}'"
             )
         return self.read_table(table=table, query=sql)
+
+    def write(
+        self,
+        table: str,
+        data: "pd.DataFrame",
+        mode: str = "replace",
+    ) -> None:
+        """
+        Write a DataFrame to an existing Postgres table.
+
+        mode='replace' — TRUNCATE then INSERT (idempotent; preserves table DDL/constraints)
+        mode='append'  — INSERT without truncating
+        """
+        if data.empty:
+            return
+
+        cols = list(data.columns)
+        placeholders = ", ".join(["%s"] * len(cols))
+        col_list = ", ".join(cols)
+        insert_sql = f"INSERT INTO {table} ({col_list}) VALUES ({placeholders})"
+        rows = [tuple(row) for row in data.itertuples(index=False, name=None)]
+
+        with self.connection() as conn:
+            with conn.cursor() as cur:
+                if mode == "replace":
+                    cur.execute(f"TRUNCATE TABLE {table};")
+                cur.executemany(insert_sql, rows)
+            conn.commit()
+

@@ -1,0 +1,4 @@
+id,merchant_id,event_type,amount,created_at
+evt_p1,A,AUTHORIZED,150,2026-01-02 09:00:00
+evt_p2,A,CAPTURED,50,2026-01-02 09:10:00
+evt_p3,A,CAPTURED,30,2026-01-02 09:15:00

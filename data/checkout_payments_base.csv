@@ -1,0 +1,3 @@
+id,merchant_id,amount,captured_amount,refund_amount,dispute_status,created_at
+cp_1,A,100,100,0,,2026-01-01 10:05:00
+cp_2,B,200,200,0,,2026-01-01 11:10:00

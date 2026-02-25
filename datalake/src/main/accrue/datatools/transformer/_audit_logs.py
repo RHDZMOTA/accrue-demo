@@ -1,9 +1,9 @@
 import pandas as pd
 
-from accrue.datatools.transformer.interface import Transformer
+from accrue.datatools.transformer.interface import SingleSourceTransformer
 
 
-class AuditLogsTransformer(Transformer):
+class AuditLogsTransformer(SingleSourceTransformer):
     """
     Bronze audit_logs → Silver audit_logs_clean.
 

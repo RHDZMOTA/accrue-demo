@@ -20,8 +20,17 @@ if TYPE_CHECKING:
 # Base class
 # ---------------------------------------------------------------------------
 
+class TransformerInterface:
+
+    def run(self) -> pd.DataFrame:
+        raise NotImplementedError
+
+    def validate(self, df: pd.DataFrame) -> None:
+        raise NotImplementedError
+
+
 @dataclass
-class Transformer:
+class SingleSourceTransformer(TransformerInterface):
     """
     Abstract base for Bronze → Silver transforms.
 
@@ -84,3 +93,41 @@ class Transformer:
               .drop_duplicates(subset=[pk_col], keep="first")
               .reset_index(drop=True)
         )
+
+
+@dataclass
+class MultiSourceTransformer(TransformerInterface):
+    """
+    Abstract base for multi-source (Gold) transforms.
+
+    Reads from multiple source tables and writes to a single target table.
+    Subclasses must implement `transform(*dfs)` — one DataFrame per source table,
+    in the same order as `source_tables`.
+    `run()` orchestrates: read all sources → transform → validate → write.
+    """
+    source_tables: list[str]
+    target_table: str
+    source_service: "DeltaService"
+    target_service: "DeltaService"
+
+    def transform(self, *dfs: pd.DataFrame) -> pd.DataFrame:
+        """Override in subclass. Receives one DataFrame per source_table entry."""
+        raise NotImplementedError
+
+    def validate(self, df: pd.DataFrame) -> None:
+        """Override to add post-transform assertions. Raise ValueError on failure."""
+        pass
+
+    def run(self) -> pd.DataFrame:
+        """Full pipeline: read all sources → transform → validate → write Gold."""
+        dfs = [self.source_service.read_table(t) for t in self.source_tables]
+        df = self.transform(*dfs)
+        self.validate(df)
+        self.target_service.write(
+            table=self.target_table,
+            data=df,
+            mode="overwrite",
+        )
+        sources = ", ".join(self.source_tables)
+        print(f"  ✓ [{sources}] → {self.target_table}  ({len(df)} rows)")
+        return df

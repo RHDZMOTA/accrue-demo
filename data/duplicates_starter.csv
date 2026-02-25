@@ -1,0 +1,2 @@
+id,merchant_id,event_type,amount,created_at
+evt_2_dup,A,CAPTURED,100,2026-01-01 10:05:00

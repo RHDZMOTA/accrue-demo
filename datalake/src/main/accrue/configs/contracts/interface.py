@@ -162,7 +162,6 @@ class Contract:
     
     def to_transformer(self, source_kwargs: dict | None = None, target_kwargs: dict | None = None):
         """Build a Transformer pre-wired from this contract."""
-        from accrue.datatools.transformer.interface import Transformer
         from accrue.datatools.transformer.catalog import TransformerCatalog
         *_, key = self.table_name.upper().split("/")
         return TransformerCatalog[key](
