@@ -16,9 +16,14 @@ class DeltaService(ServiceInterface):
 
     `path` is the base directory; individual tables live at `{path}/{table}`.
     Convention:
-        ./delta/bronze/payment_events/
-        ./delta/silver/payment_events_deduped/
-        ./delta/gold/merchant_daily_risk_reports/
+        ./datalake/layer/bronze/payment_events/
+        ./datalake/layer/silver/payment_events_clean/
+        ./datalake/layer/gold/merchant_daily_risk_reports/
+
+    NOTE: The default path is cwd-relative (`./datalake/layer`). All datajobs
+    must be invoked from the **project root** so that Delta tables land in the
+    correct location. Override via the `DELTA_PATH` environment variable if
+    running from a different working directory.
     """
     path: str = field(default_factory=lambda: os.path.abspath(os.environ.get("DELTA_PATH", "./datalake/layer")))
 
