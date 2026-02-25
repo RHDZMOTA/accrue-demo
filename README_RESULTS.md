@@ -145,9 +145,9 @@ Run after loading all data and executing the full pipeline:
 ```bash
 bash ddl/load_data.sh
 bash ddl/load_edge_cases.sh
-venv/bin/python -m accrue.datajobs.bronze
-venv/bin/python -m accrue.datajobs.silver
-venv/bin/python -m accrue.datajobs.gold
+python -m accrue.datajobs.bronze
+python -m accrue.datajobs.silver
+python -m accrue.datajobs.gold
 psql -f tests/template_edge_cases.sql
 ```
 
