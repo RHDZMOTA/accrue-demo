@@ -1,7 +1,15 @@
-fire
-deltalake
-pandas
+# Core pipeline
+deltalake==1.4.2
+pandas==3.0.1
+pyarrow==23.0.1
 duckdb
-sqlalchemy
-psycopg2-binary
-pyarrow
+
+# Postgres connectivity
+psycopg2-binary==2.9.11
+sqlalchemy>=2.0
+
+# CLI
+fire
+
+# Testing
+pytest==9.0.2
