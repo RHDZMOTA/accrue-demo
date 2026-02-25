@@ -1,1 +1,7 @@
 fire
+deltalake
+pandas
+duckdb
+sqlalchemy
+psycopg2-binary
+pyarrow

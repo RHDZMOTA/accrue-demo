@@ -1,0 +1,57 @@
+{
+    "contract_version": "1.0.0",
+    "description": "Cleaned and deduplicated payment events. Source: bronze/payment_events Delta table.",
+    "owner": "data-eng",
+    "tags": [
+        "payments",
+        "events",
+        "silver"
+    ],
+    "source_service_type": "DELTA",
+    "database_schema": "silver",
+    "table_name": "bronze/payment_events",
+    "target_service_type": "DELTA",
+    "target_layer": "silver",
+    "target_tablename": "silver/payment_events_clean",
+    "refresh_mode": "full_reload",
+    "primary_keys": [
+        {
+            "name": "id",
+            "type": "TEXT"
+        }
+    ],
+    "watermark": null,
+    "quality_rules": [
+        {
+            "rule_type": "not_null",
+            "columns": [
+                "id",
+                "merchant_id",
+                "event_type",
+                "amount",
+                "created_at"
+            ]
+        },
+        {
+            "rule_type": "unique",
+            "columns": [
+                "id"
+            ]
+        },
+        {
+            "rule_type": "allowed_values",
+            "column": "event_type",
+            "values": [
+                "AUTHORIZED",
+                "CAPTURED",
+                "REFUNDED",
+                "DISPUTED"
+            ]
+        },
+        {
+            "rule_type": "value_range",
+            "column": "amount",
+            "min": 0
+        }
+    ]
+}

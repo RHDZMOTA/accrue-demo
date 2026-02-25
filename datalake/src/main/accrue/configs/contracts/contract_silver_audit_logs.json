@@ -1,0 +1,51 @@
+{
+    "contract_version": "1.0.0",
+    "description": "Cleaned and deduplicated audit log entries with is_fraud_signal flag. Source: bronze/audit_logs Delta table.",
+    "owner": "data-eng",
+    "tags": [
+        "audit",
+        "fraud",
+        "silver"
+    ],
+    "source_service_type": "DELTA",
+    "database_schema": "silver",
+    "table_name": "bronze/audit_logs",
+    "target_service_type": "DELTA",
+    "target_layer": "silver",
+    "target_tablename": "silver/audit_logs_clean",
+    "refresh_mode": "full_reload",
+    "primary_keys": [
+        {
+            "name": "id",
+            "type": "TEXT"
+        }
+    ],
+    "watermark": null,
+    "quality_rules": [
+        {
+            "rule_type": "not_null",
+            "columns": [
+                "id",
+                "merchant_id",
+                "action",
+                "created_at"
+            ]
+        },
+        {
+            "rule_type": "unique",
+            "columns": [
+                "id"
+            ]
+        },
+        {
+            "rule_type": "allowed_values",
+            "column": "action",
+            "values": [
+                "FRAUD_FLAGGED",
+                "REVIEW_COMPLETED",
+                "DISPUTE_OPENED",
+                "DISPUTE_RESOLVED"
+            ]
+        }
+    ]
+}

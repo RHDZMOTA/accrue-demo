@@ -1,0 +1,64 @@
+{
+    "contract_version": "1.0.0",
+    "description": "Raw payment lifecycle events from the OLTP system.",
+    "owner": "data-eng",
+    "tags": [
+        "payments",
+        "events",
+        "bronze"
+    ],
+    "source_service_type": "POSTGRES",
+    "database_schema": "public",
+    "table_name": "payment_events",
+    "target_service_type": "DELTA",
+    "target_layer": "bronze",
+    "target_tablename": "bronze/payment_events",
+    "refresh_mode": "incremental",
+    "primary_keys": [
+        {
+            "name": "id",
+            "type": "TEXT"
+        }
+    ],
+    "watermark": {
+        "column": "created_at",
+        "type": "TIMESTAMP"
+    },
+    "quality_rules": [
+        {
+            "rule_type": "not_null",
+            "columns": [
+                "id",
+                "merchant_id",
+                "event_type",
+                "amount",
+                "created_at"
+            ]
+        },
+        {
+            "rule_type": "unique",
+            "columns": [
+                "id"
+            ]
+        },
+        {
+            "rule_type": "allowed_values",
+            "column": "event_type",
+            "values": [
+                "AUTHORIZED",
+                "CAPTURED",
+                "REFUNDED",
+                "DISPUTED"
+            ]
+        },
+        {
+            "rule_type": "value_range",
+            "column": "amount",
+            "min": 0
+        },
+        {
+            "rule_type": "row_count_min",
+            "count": 1
+        }
+    ]
+}

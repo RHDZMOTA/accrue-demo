@@ -1,0 +1,57 @@
+{
+    "contract_version": "1.0.0",
+    "description": "Checkout payment records. Mutable — dispute_status and refund_amount can be updated after creation.",
+    "owner": "data-eng",
+    "tags": [
+        "payments",
+        "checkout",
+        "bronze"
+    ],
+    "source_service_type": "POSTGRES",
+    "database_schema": "public",
+    "table_name": "checkout_payments",
+    "target_service_type": "DELTA",
+    "target_layer": "bronze",
+    "target_tablename": "bronze/checkout_payments",
+    "refresh_mode": "full_reload",
+    "primary_keys": [
+        {
+            "name": "id",
+            "type": "TEXT"
+        }
+    ],
+    "watermark": null,
+    "quality_rules": [
+        {
+            "rule_type": "not_null",
+            "columns": [
+                "id",
+                "merchant_id",
+                "amount",
+                "captured_amount",
+                "created_at"
+            ]
+        },
+        {
+            "rule_type": "unique",
+            "columns": [
+                "id"
+            ]
+        },
+        {
+            "rule_type": "value_range",
+            "column": "amount",
+            "min": 0
+        },
+        {
+            "rule_type": "value_range",
+            "column": "captured_amount",
+            "min": 0
+        },
+        {
+            "rule_type": "value_range",
+            "column": "refund_amount",
+            "min": 0
+        }
+    ]
+}

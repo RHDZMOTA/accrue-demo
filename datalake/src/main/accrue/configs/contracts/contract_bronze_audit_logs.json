@@ -1,0 +1,58 @@
+{
+    "contract_version": "1.0.0",
+    "description": "Audit log entries — fraud flags, review completions, and other operational actions.",
+    "owner": "data-eng",
+    "tags": [
+        "audit",
+        "fraud",
+        "bronze"
+    ],
+    "source_service_type": "POSTGRES",
+    "database_schema": "public",
+    "table_name": "audit_logs",
+    "target_service_type": "DELTA",
+    "target_layer": "bronze",
+    "target_tablename": "bronze/audit_logs",
+    "refresh_mode": "incremental",
+    "primary_keys": [
+        {
+            "name": "id",
+            "type": "TEXT"
+        }
+    ],
+    "watermark": {
+        "column": "created_at",
+        "type": "TIMESTAMP"
+    },
+    "quality_rules": [
+        {
+            "rule_type": "not_null",
+            "columns": [
+                "id",
+                "merchant_id",
+                "action",
+                "created_at"
+            ]
+        },
+        {
+            "rule_type": "unique",
+            "columns": [
+                "id"
+            ]
+        },
+        {
+            "rule_type": "allowed_values",
+            "column": "action",
+            "values": [
+                "FRAUD_FLAGGED",
+                "REVIEW_COMPLETED",
+                "DISPUTE_OPENED",
+                "DISPUTE_RESOLVED"
+            ]
+        },
+        {
+            "rule_type": "row_count_min",
+            "count": 1
+        }
+    ]
+}
